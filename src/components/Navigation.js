@@ -5,7 +5,7 @@ import "./css/styles.css";
 import Home from "./Home.png";
 import logo from "./icon.png";
 import { auth } from "../firebase";
-import {signOut } from "firebase/auth";
+//import {signOut } from "firebase/auth";
 
 export default function Navigation() {
   return (
@@ -48,7 +48,7 @@ export default function Navigation() {
                   Admin
                 </div>
 
-                <Link class="nav-link sidenavtext " to="StagesOfLife">
+                <Link class="nav-link sidenavtext " to="/StagesOfLife">
                   <div class="sb-nav-link-icon"></div>
                   <img
                     src={logo}
@@ -57,7 +57,7 @@ export default function Navigation() {
                   Stages of life
                 </Link>
 
-                <Link class="nav-link sidenavtext " to="AddQuotes">
+                <Link class="nav-link sidenavtext " to="/AddQuotes">
                   <div class="sb-nav-link-icon"></div>
                   <img
                     src={logo}
@@ -66,7 +66,7 @@ export default function Navigation() {
                   Quotes Managment
                 </Link>
 
-                <Link class="nav-link sidenavtext " to="AllUsers">
+                <Link class="nav-link sidenavtext " to="/AllUsers">
                   <div class="sb-nav-link-icon"></div>
                   <img
                     src={logo}
@@ -75,7 +75,7 @@ export default function Navigation() {
                   All Users
                 </Link>
 
-                <Link class="nav-link sidenavtext " to="Forums">
+                <Link class="nav-link sidenavtext " to="/Forums">
                   <div class="sb-nav-link-icon"></div>
                   <img
                     src={logo}
@@ -84,13 +84,10 @@ export default function Navigation() {
                   Forums
                 </Link>
 
-                <Link class="nav-link sidenavtext " to="/">
+                <Link class="nav-link sidenavtext " to="/login">
                   <div class="sb-nav-link-icon"></div>
                   <img
-                  onClick={()=>{
-                    signOut(auth);
-                    }
-                  }
+                 
                     src={logo}
                     style={{ width: 25, height: 25, marginRight: 15 }}
                   ></img>{" "}

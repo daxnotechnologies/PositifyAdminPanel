@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Autocomplete, Button, TextField } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { db } from "../firebase";
+import { db,storage } from "../firebase";
 import {
   collection,
   addDoc,
@@ -36,21 +37,63 @@ export default function StagesOfLife() {
   const handleClose = () => setOpen(false);
   const stagessCollectionRef = collection(db, "stagesoflife");
   const [loading, setloading] = useState(false);
-
+  const [headerimg,setheaderImg]=useState()
   const [stages, setstages] = useState([]);
+  const getBase64 = (file) => {
+    return new Promise(resolve => {
+      let baseURL = "";
+      // Make new FileReader
+      let reader = new FileReader();
+      // Convert the file to base64 text
+      reader.readAsDataURL(file);
 
+      // on reader load somthing...
+      reader.onload = () => {
+        // Make a fileInfo Object
+
+        baseURL = reader.result;
+        resolve(baseURL);
+      };
+    });
+  };
   const handleAdd = async () => {
-    await addDoc(stagessCollectionRef, {
+    if (img !== null) {
+      getBase64(img)
+      .then(result => {
+        img["base64"] = result;
+        setheaderImg(result)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+        if(art!==null){
+      const imageRefart = ref(storage, `${art.name}-${Date.now()}`);
+      await uploadBytes(imageRefart, art);
+        const pathart = await getDownloadURL(imageRefart);
+        }
+      // console.log(imageRef);
+      try {
+        
+        
+     await addDoc(stagessCollectionRef, {
       name: name,
-      image: img,
+      image: headerimg,
       art: art,
       pcat: p_cat,
     });
+  
     setName("");
     setImg("");
     setArt("");
     setPcat("");
+  }
+
+  catch(err){
+
+  }
+}
   };
+
   const getstagesoflife = async () => {
     const data = await getDocs(stagessCollectionRef);
     console.log(data);
@@ -161,7 +204,11 @@ export default function StagesOfLife() {
               {stages.map((stage) => {
                 return (
                   <tr>
-                    <td>{stage.image}</td>
+                    <td>
+                      <img src={stage.image}>
+
+                      </img>
+                    </td>
                     <td>{stage.name}</td>
                     <td>
                       <>
