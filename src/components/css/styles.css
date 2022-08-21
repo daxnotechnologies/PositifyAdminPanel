@@ -244,6 +244,7 @@ a:not([href]):not([class]):hover {
 img,
 svg {
   vertical-align: middle;
+  
 }
 
 table {

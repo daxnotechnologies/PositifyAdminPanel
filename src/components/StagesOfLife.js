@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Autocomplete, Button, TextField } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { db,storage } from "../firebase";
@@ -12,6 +11,7 @@ import {
   getDocs,
   doc,
   deleteDoc,
+  updateDoc
 } from "firebase/firestore";
 import { textAlign } from "@mui/system";
 
@@ -25,7 +25,6 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-
 export default function StagesOfLife() {
   //  const [rows, setrows] = useState([]);
   const [p_cat, setPcat] = useState([]);
@@ -33,12 +32,62 @@ export default function StagesOfLife() {
   const [art, setArt] = useState("");
   const [name, setName] = useState("");
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
+  const [p_cate, setPcate] = useState([]);
+  const [imge, setImge] = useState("");
+  const [arte, setArte] = useState("");
+  const [namee, setNamee] = useState("");
+  const [eid, seteid] = useState("");
+
+  const [open1, setOpen1] = useState(false);
+  const handleOpen1 = () => 
+  setOpen1(true);
+const handleClose1 = () => setOpen1(false);
+  const handleOpen = () => 
+    setOpen(true);
   const handleClose = () => setOpen(false);
   const stagessCollectionRef = collection(db, "stagesoflife");
   const [loading, setloading] = useState(false);
   const [headerimg,setheaderImg]=useState()
   const [stages, setstages] = useState([]);
+  
+  const handleAdd = async () => {
+
+    if (img !== null) {
+      const imageRef = ref(storage, `${img}-${Date.now()}`);
+      await uploadBytes(imageRef, img);
+      const path = await getDownloadURL(imageRef);
+     
+        if(art!==null){
+      const imageRefart = ref(storage, `${art.name}-${Date.now()}`);
+      await uploadBytes(imageRefart, art);
+        const pathart = await getDownloadURL(imageRefart);
+        
+      // console.log(imageRef);
+      try {
+        
+        
+        console.log("pathhh",headerimg)
+     await addDoc(stagessCollectionRef, {
+      name: name,
+      image: path,
+      art: pathart,
+      pcat: p_cat,
+    });
+  
+    setName("");
+    setImg("");
+    setArt("");
+    setPcat("");
+    setOpen(false)
+
+  }
+  
+
+  catch(err){
+
+  }
+}}
+  };
   const getBase64 = (file) => {
     return new Promise(resolve => {
       let baseURL = "";
@@ -56,42 +105,57 @@ export default function StagesOfLife() {
       };
     });
   };
-  const handleAdd = async () => {
-    if (img !== null) {
-      getBase64(img)
-      .then(result => {
-        img["base64"] = result;
-        setheaderImg(result)
-      })
-      .catch(err => {
-        console.log(err);
-      });
-        if(art!==null){
-      const imageRefart = ref(storage, `${art.name}-${Date.now()}`);
-      await uploadBytes(imageRefart, art);
+  const handleUpdate = async () => {
+
+    if (imge !== null ) {
+      const imageRef = ref(storage, `${imge}-${Date.now()}`);
+      await uploadBytes(imageRef, imge);
+      const path = await getDownloadURL(imageRef);
+
+      getBase64(imge)
+        .then(result => {
+          imge["base64"] = result;
+          setheaderImg(result)
+        })
+        .catch(err => {
+          console.log(err);
+        });
+        if(arte!==null){
+         
+      const imageRefart = ref(storage, `${arte}-${Date.now()}`);
+      await uploadBytes(imageRefart, arte);
         const pathart = await getDownloadURL(imageRefart);
-        }
+        
       // console.log(imageRef);
       try {
         
         
-     await addDoc(stagessCollectionRef, {
-      name: name,
-      image: headerimg,
-      art: art,
-      pcat: p_cat,
-    });
+        console.log("pathhh",eid)
+        const frankDocRef = doc(db, "stagesoflife", eid);
+        console.log("frankdocred",frankDocRef)
+    await updateDoc(frankDocRef, {
+      name: namee,
+      image: path,
+      art: pathart,
+      pcat: p_cate,
+    }).then(res=>{
+      console.log("rees",res)
+    }).catch(err=>{
+      console.log("error",err)
+    })
   
-    setName("");
-    setImg("");
-    setArt("");
-    setPcat("");
+    setNamee("");
+    setImge("");
+    setArte("");
+    setPcate("");
+    setOpen1(false)
   }
 
   catch(err){
 
   }
 }
+    }
   };
 
   const getstagesoflife = async () => {
@@ -104,7 +168,7 @@ export default function StagesOfLife() {
     await deleteDoc(stageDoc);
     getstagesoflife();
   };
-
+ 
   useEffect(() => {
     getstagesoflife();
   }, []);
@@ -122,7 +186,9 @@ export default function StagesOfLife() {
             backgroundColor: "#65350f",
             marginBottom: 30,
           }}
-          onClick={handleOpen}
+          onClick={
+            handleOpen
+          }
         >
           Add Stages Of Life
         </Button>
@@ -136,9 +202,7 @@ export default function StagesOfLife() {
             <h5 style={{ textAlign: "center", marginBottom: 15 }}>
               Add Stages Of Life
             </h5>
-            <label className="mb-2">
-              <b>Upload Image</b>
-            </label>
+            
             <input
               type="file"
               onChange={(e) => setImg(e.target.value)}
@@ -163,7 +227,7 @@ export default function StagesOfLife() {
                 <TextField
                   {...params}
                   size="small"
-                  onChange={(e) => setPcat(e.target.value)}
+                  onSelect={(e) => setPcat(e.target.value)}
                   value={p_cat}
                   variant="outlined"
                   label="Select Parent Categories"
@@ -191,8 +255,71 @@ export default function StagesOfLife() {
             </Button>
           </Box>
         </Modal>
+
+        <Modal
+          open={open1}
+          onClose={handleClose1}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <h5 style={{ textAlign: "center", marginBottom: 15 }}>
+              Edit Stages Of Life
+            </h5>
+            <input
+              type="file"
+              onChange={(e) => setImge(e.target.value)}
+              //value={imge.toString()}
+            ></input>
+            <TextField
+              className="my-4"
+              size="small"
+              fullWidth
+              id="outlined-basic"
+              label="Name"
+              value={namee}
+              variant="outlined"
+             onChange={(e) => setNamee(e.target.value)}
+            />
+            <Autocomplete
+              multiple
+              className="mb-4"
+              options={top100Films}
+              getOptionLabel={(option) => option.title}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  size="small"
+                  onChange={(e) => setPcate(e.target.value)}
+                  value={p_cate}
+                  variant="outlined"
+                  label="Select Parent Categories"
+                  placeholder="Select Parent Categories"
+                />
+              )}
+            />
+
+            <label className="mb-2">
+              <b>Upload Art</b>
+            </label>
+            <input
+              type="file"
+              onChange={(e) => setArte(e.target.value)}
+             // value={arte}
+            ></input>
+
+            <Button
+              style={{ backgroundColor: "#65350f", float: "right" }}
+              variant="contained"
+              size="small"
+              onClick={handleUpdate}
+            >
+              Submit
+            </Button>
+          </Box>
+        </Modal>
         <div>
-          <table className="table" style={{ textAlign: "center" }}>
+          <table className="table" style={{ textAlign: "center",height:40 }}>
             <thead>
               <tr>
                 <th className="col-1">Image</th>
@@ -217,6 +344,16 @@ export default function StagesOfLife() {
                             backgroundColor: "#65350f",
                             marginRight: 15,
                           }}
+                          onClick={()=>{
+                            setArte(stage.art)
+                            setNamee(stage.name)
+                            setImge(stage.image)
+                            setPcate(stage.pcat)
+                            seteid(stage.id)
+                            handleOpen1()
+                           // handleOpenEdit(stage)
+                          }
+                          }
                           variant="contained"
                           size="small"
                         >

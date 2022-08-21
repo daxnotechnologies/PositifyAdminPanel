@@ -48,7 +48,7 @@ export default function Navigation() {
                   Admin
                 </div>
 
-                <Link class="nav-link sidenavtext " to="/StagesOfLife">
+                <Link class="nav-link sidenavtext " to="/Dashboard/StagesOfLife">
                   <div class="sb-nav-link-icon"></div>
                   <img
                     src={logo}
@@ -57,7 +57,7 @@ export default function Navigation() {
                   Stages of life
                 </Link>
 
-                <Link class="nav-link sidenavtext " to="/AddQuotes">
+                <Link class="nav-link sidenavtext " to="/Dashboard/AddQuotes">
                   <div class="sb-nav-link-icon"></div>
                   <img
                     src={logo}
@@ -66,7 +66,7 @@ export default function Navigation() {
                   Quotes Managment
                 </Link>
 
-                <Link class="nav-link sidenavtext " to="/AllUsers">
+                <Link class="nav-link sidenavtext " to="/Dashboard/AllUsers">
                   <div class="sb-nav-link-icon"></div>
                   <img
                     src={logo}
@@ -75,7 +75,7 @@ export default function Navigation() {
                   All Users
                 </Link>
 
-                <Link class="nav-link sidenavtext " to="/Forums">
+                <Link class="nav-link sidenavtext " to="/Dashboard/Forums">
                   <div class="sb-nav-link-icon"></div>
                   <img
                     src={logo}
@@ -84,7 +84,7 @@ export default function Navigation() {
                   Forums
                 </Link>
 
-                <Link class="nav-link sidenavtext " to="/login">
+                <Link class="nav-link sidenavtext " to="/">
                   <div class="sb-nav-link-icon"></div>
                   <img
                  

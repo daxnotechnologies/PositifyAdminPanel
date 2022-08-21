@@ -37,7 +37,7 @@ export default function Login() {
          loginPassword
        ).then(res=>{
           console.log("resss",res)
-          navigate("/");
+          navigate("/Dashboard");
           console.log("resss",User)
 
        }).catch(err=>{

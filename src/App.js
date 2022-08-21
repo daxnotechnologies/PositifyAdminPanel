@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes,Navigate } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import StagesOfLife from "./components/StagesOfLife";
@@ -12,12 +12,12 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />}/>
-        <Route path="/" element={<Navigation />}>
-          <Route path="/StagesOfLife" element={<StagesOfLife />} />
-          <Route path="/AllUsers" element={<AllUsers />} />
-          <Route path="/AddQuotes" element={<AddQuotes />} />
-          <Route path="/Forums" element={<Forums />} />
+        <Route path="/" element={<Login />}/>
+        <Route path="/Dashboard" element={<Navigation />}>
+          <Route path="/Dashboard/StagesOfLife" element={<StagesOfLife />} />
+          <Route path="/Dashboard/AllUsers" element={<AllUsers />} />
+          <Route path="/Dashboard/AddQuotes" element={<AddQuotes />} />
+          <Route path="/Dashboard/Forums" element={<Forums />} />
           </Route>
       </Routes>
     </Router>
