@@ -4,14 +4,14 @@ import { Link, Outlet } from "react-router-dom";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { db,storage } from "../firebase";
+import { db, storage } from "../firebase";
 import {
   collection,
   addDoc,
   getDocs,
   doc,
   deleteDoc,
-  updateDoc
+  updateDoc,
 } from "firebase/firestore";
 import { textAlign } from "@mui/system";
 
@@ -39,57 +39,47 @@ export default function StagesOfLife() {
   const [eid, seteid] = useState("");
 
   const [open1, setOpen1] = useState(false);
-  const handleOpen1 = () => 
-  setOpen1(true);
-const handleClose1 = () => setOpen1(false);
-  const handleOpen = () => 
-    setOpen(true);
+  const handleOpen1 = () => setOpen1(true);
+  const handleClose1 = () => setOpen1(false);
+  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const stagessCollectionRef = collection(db, "stagesoflife");
   const [loading, setloading] = useState(false);
-  const [headerimg,setheaderImg]=useState()
+  const [headerimg, setheaderImg] = useState();
   const [stages, setstages] = useState([]);
-  
-  const handleAdd = async () => {
 
+  const handleAdd = async () => {
     if (img !== null) {
       const imageRef = ref(storage, `${img}-${Date.now()}`);
       await uploadBytes(imageRef, img);
       const path = await getDownloadURL(imageRef);
-     
-        if(art!==null){
-      const imageRefart = ref(storage, `${art.name}-${Date.now()}`);
-      await uploadBytes(imageRefart, art);
+
+      if (art !== null) {
+        const imageRefart = ref(storage, `${art.name}-${Date.now()}`);
+        await uploadBytes(imageRefart, art);
         const pathart = await getDownloadURL(imageRefart);
-        
-      // console.log(imageRef);
-      try {
-        
-        
-        console.log("pathhh",headerimg)
-     await addDoc(stagessCollectionRef, {
-      name: name,
-      image: path,
-      art: pathart,
-      pcat: p_cat,
-    });
-  
-    setName("");
-    setImg("");
-    setArt("");
-    setPcat("");
-    setOpen(false)
 
-  }
-  
+        // console.log(imageRef);
+        try {
+          console.log("pathhh", headerimg);
+          await addDoc(stagessCollectionRef, {
+            name: name,
+            image: path,
+            art: pathart,
+            pcat: p_cat,
+          });
 
-  catch(err){
-
-  }
-}}
+          setName("");
+          setImg("");
+          setArt("");
+          setPcat("");
+          setOpen(false);
+        } catch (err) {}
+      }
+    }
   };
   const getBase64 = (file) => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       let baseURL = "";
       // Make new FileReader
       let reader = new FileReader();
@@ -106,55 +96,49 @@ const handleClose1 = () => setOpen1(false);
     });
   };
   const handleUpdate = async () => {
-
-    if (imge !== null ) {
+    if (imge !== null) {
       const imageRef = ref(storage, `${imge}-${Date.now()}`);
       await uploadBytes(imageRef, imge);
       const path = await getDownloadURL(imageRef);
 
       getBase64(imge)
-        .then(result => {
+        .then((result) => {
           imge["base64"] = result;
-          setheaderImg(result)
+          setheaderImg(result);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
-        if(arte!==null){
-         
-      const imageRefart = ref(storage, `${arte}-${Date.now()}`);
-      await uploadBytes(imageRefart, arte);
+      if (arte !== null) {
+        const imageRefart = ref(storage, `${arte}-${Date.now()}`);
+        await uploadBytes(imageRefart, arte);
         const pathart = await getDownloadURL(imageRefart);
-        
-      // console.log(imageRef);
-      try {
-        
-        
-        console.log("pathhh",eid)
-        const frankDocRef = doc(db, "stagesoflife", eid);
-        console.log("frankdocred",frankDocRef)
-    await updateDoc(frankDocRef, {
-      name: namee,
-      image: path,
-      art: pathart,
-      pcat: p_cate,
-    }).then(res=>{
-      console.log("rees",res)
-    }).catch(err=>{
-      console.log("error",err)
-    })
-  
-    setNamee("");
-    setImge("");
-    setArte("");
-    setPcate("");
-    setOpen1(false)
-  }
 
-  catch(err){
+        // console.log(imageRef);
+        try {
+          console.log("pathhh", eid);
+          const frankDocRef = doc(db, "stagesoflife", eid);
+          console.log("frankdocred", frankDocRef);
+          await updateDoc(frankDocRef, {
+            name: namee,
+            image: path,
+            art: pathart,
+            pcat: p_cate,
+          })
+            .then((res) => {
+              console.log("rees", res);
+            })
+            .catch((err) => {
+              console.log("error", err);
+            });
 
-  }
-}
+          setNamee("");
+          setImge("");
+          setArte("");
+          setPcate("");
+          setOpen1(false);
+        } catch (err) {}
+      }
     }
   };
 
@@ -168,7 +152,7 @@ const handleClose1 = () => setOpen1(false);
     await deleteDoc(stageDoc);
     getstagesoflife();
   };
- 
+
   useEffect(() => {
     getstagesoflife();
   }, []);
@@ -177,7 +161,7 @@ const handleClose1 = () => setOpen1(false);
     <div>
       <div className="p-4 m-4">
         <h1 style={{ textAlign: "center", marginBottom: 40 }}>
-          <b>STAGES OF LIFE</b>
+          <b>CATEGORIES</b>
         </h1>
         <Button
           variant="contained"
@@ -186,11 +170,9 @@ const handleClose1 = () => setOpen1(false);
             backgroundColor: "#65350f",
             marginBottom: 30,
           }}
-          onClick={
-            handleOpen
-          }
+          onClick={handleOpen}
         >
-          Add Stages Of Life
+          Add Categories
         </Button>
         <Modal
           open={open}
@@ -200,9 +182,12 @@ const handleClose1 = () => setOpen1(false);
         >
           <Box sx={style}>
             <h5 style={{ textAlign: "center", marginBottom: 15 }}>
-              Add Stages Of Life
+              Add New Categories
             </h5>
-            
+
+            <label className="mb-2">
+              <b>Upload Icon</b>
+            </label>
             <input
               type="file"
               onChange={(e) => setImg(e.target.value)}
@@ -213,7 +198,7 @@ const handleClose1 = () => setOpen1(false);
               size="small"
               fullWidth
               id="outlined-basic"
-              label="Name"
+              label="Category Name"
               value={name}
               variant="outlined"
               onChange={(e) => setName(e.target.value)}
@@ -237,7 +222,7 @@ const handleClose1 = () => setOpen1(false);
             />
 
             <label className="mb-2">
-              <b>Upload Art</b>
+              <b>Upload Background Art</b>
             </label>
             <input
               type="file"
@@ -279,7 +264,7 @@ const handleClose1 = () => setOpen1(false);
               label="Name"
               value={namee}
               variant="outlined"
-             onChange={(e) => setNamee(e.target.value)}
+              onChange={(e) => setNamee(e.target.value)}
             />
             <Autocomplete
               multiple
@@ -305,7 +290,7 @@ const handleClose1 = () => setOpen1(false);
             <input
               type="file"
               onChange={(e) => setArte(e.target.value)}
-             // value={arte}
+              // value={arte}
             ></input>
 
             <Button
@@ -319,12 +304,12 @@ const handleClose1 = () => setOpen1(false);
           </Box>
         </Modal>
         <div>
-          <table className="table" style={{ textAlign: "center",height:40 }}>
+          <table className="table" style={{ textAlign: "center", height: 40 }}>
             <thead>
               <tr>
                 <th className="col-1">Image</th>
                 <th className="col-2">Name</th>
-                <th className="col-3">Actions</th>
+                <th className="col-2">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -332,9 +317,7 @@ const handleClose1 = () => setOpen1(false);
                 return (
                   <tr>
                     <td>
-                      <img src={stage.image}>
-
-                      </img>
+                      <img src={stage.image}></img>
                     </td>
                     <td>{stage.name}</td>
                     <td>
@@ -344,16 +327,29 @@ const handleClose1 = () => setOpen1(false);
                             backgroundColor: "#65350f",
                             marginRight: 15,
                           }}
-                          onClick={()=>{
-                            setArte(stage.art)
-                            setNamee(stage.name)
-                            setImge(stage.image)
-                            setPcate(stage.pcat)
-                            seteid(stage.id)
-                            handleOpen1()
-                           // handleOpenEdit(stage)
-                          }
-                          }
+                          variant="contained"
+                          size="small"
+                          // onClick=
+                          // {() => {
+                          //   handleDelete(stage.id);
+                          // }}
+                        >
+                          View Forum
+                        </Button>
+                        <Button
+                          style={{
+                            backgroundColor: "#65350f",
+                            marginRight: 15,
+                          }}
+                          onClick={() => {
+                            setArte(stage.art);
+                            setNamee(stage.name);
+                            setImge(stage.image);
+                            setPcate(stage.pcat);
+                            seteid(stage.id);
+                            handleOpen1();
+                            // handleOpenEdit(stage)
+                          }}
                           variant="contained"
                           size="small"
                         >

@@ -47,7 +47,10 @@ export default function AllUsers() {
               <tr>
                 <th className="col-1">Name</th>
                 <th className="col-2">Email</th>
-                <th className="col-3">Contact No.</th>
+                <th className="col-2">Contact No.</th>
+                <th className="col-4" style={{ backgroundColor: "#f5f5f5" }}>
+                  Membership Status
+                </th>
                 <th className="col-3">Action</th>
               </tr>
             </thead>
@@ -58,6 +61,11 @@ export default function AllUsers() {
                     <td>{users.name}</td>
                     <td>{users.email}</td>
                     <td>{users.contact}</td>
+                    <td style={{ backgroundColor: "#f5f5f5" }}>
+                      {users.date}
+                      <b> {users.amount} </b>
+                    </td>
+
                     <td>
                       <>
                         <Button

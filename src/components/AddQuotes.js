@@ -36,18 +36,33 @@ const style = {
 export default function AddQuotes() {
   const [name, setName] = useState("");
   const [author, setAuthor] = useState([]);
+  const [favUser, setfavUser] = useState([]);
+
   const [theme, setTheme] = useState("");
-  const [open, setOpen] = React.useState(false);
+
+  const [ename, seteName] = useState("");
+  const [eauthor, seteAuthor] = useState([]);
+  const [etheme, seteTheme] = useState("");
+
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [open1, setOpen1] = useState(false);
+  const handleOpen1 = () => setOpen1(true);
+  const handleClose1 = () => setOpen1(false);
+
   const quotesRef = collection(db, "Quotes");
   const [quotes, setquotes] = useState([]);
+  const stagessCollectionRef = collection(db, "stagesoflife");
+  const [stages, setstages] = useState([]);
 
   const handleAdd = async () => {
     await addDoc(quotesRef, {
       name: name,
       author: author,
       cat: theme,
+      fav: favUser,
     });
     setName("");
     setAuthor("");
@@ -60,8 +75,15 @@ export default function AddQuotes() {
     setquotes(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
 
+  const getstagesoflife = async () => {
+    const data = await getDocs(stagessCollectionRef);
+    console.log(data);
+    setstages(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  };
+
   useEffect(() => {
     getquotes();
+    getstagesoflife();
   }, []);
 
   const handleDelete = async (id) => {
@@ -145,7 +167,9 @@ export default function AddQuotes() {
                 label="Theme"
                 onChange={(e) => setTheme(e.target.value)}
               >
-                <MenuItem value={10}>Ten</MenuItem>
+                {stages.map((stages) => {
+                  return <MenuItem value={stages.name}>{stages.name}</MenuItem>;
+                })}
               </Select>
             </FormControl>
             <Button
@@ -188,9 +212,81 @@ export default function AddQuotes() {
                           }}
                           variant="contained"
                           size="small"
+                          onClick={handleOpen1}
                         >
                           Edit
                         </Button>
+
+                        <Modal
+                          open={open1}
+                          onClose={handleClose1}
+                          aria-labelledby="modal-modal-title"
+                          aria-describedby="modal-modal-description"
+                        >
+                          <Box sx={style}>
+                            <h5
+                              style={{ textAlign: "center", marginBottom: 15 }}
+                            >
+                              Add Quotes
+                            </h5>
+
+                            <TextField
+                              className="my-4"
+                              size="small"
+                              required
+                              fullWidth
+                              id="outlined-basic"
+                              label="Name"
+                              value={name}
+                              variant="outlined"
+                              onChange={(e) => setName(e.target.value)}
+                            />
+                            <TextField
+                              required
+                              className="mb-4"
+                              size="small"
+                              fullWidth
+                              id="outlined-basic"
+                              label="Author"
+                              value={author}
+                              variant="outlined"
+                              onChange={(e) => setAuthor(e.target.value)}
+                            />
+
+                            <FormControl fullWidth className="mb-4">
+                              <InputLabel id="demo-simple-select-label">
+                                Set Theme Of Your Quote
+                              </InputLabel>
+                              <Select
+                                labelId="demo-simple-select-label"
+                                size="small"
+                                id="demo-simple-select"
+                                value={theme}
+                                label="Theme"
+                                onChange={(e) => setTheme(e.target.value)}
+                              >
+                                {stages.map((stages) => {
+                                  return (
+                                    <MenuItem value={stages.name}>
+                                      {stages.name}
+                                    </MenuItem>
+                                  );
+                                })}
+                              </Select>
+                            </FormControl>
+                            <Button
+                              style={{
+                                backgroundColor: "#80471C",
+                                float: "right",
+                              }}
+                              variant="contained"
+                              size="small"
+                              onClick={handleAdd}
+                            >
+                              Submit
+                            </Button>
+                          </Box>
+                        </Modal>
                         <Button
                           style={{ backgroundColor: "#65350f" }}
                           variant="contained"

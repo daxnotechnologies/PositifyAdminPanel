@@ -48,13 +48,16 @@ export default function Navigation() {
                   Admin
                 </div>
 
-                <Link class="nav-link sidenavtext " to="/Dashboard/StagesOfLife">
+                <Link
+                  class="nav-link sidenavtext "
+                  to="/Dashboard/StagesOfLife"
+                >
                   <div class="sb-nav-link-icon"></div>
                   <img
                     src={logo}
                     style={{ width: 25, height: 25, marginRight: 15 }}
                   ></img>
-                  Stages of life
+                  Categories
                 </Link>
 
                 <Link class="nav-link sidenavtext " to="/Dashboard/AddQuotes">
@@ -75,6 +78,23 @@ export default function Navigation() {
                   All Users
                 </Link>
 
+                <Link class="nav-link sidenavtext " to="/Dashboard/Favourite">
+                  <div class="sb-nav-link-icon"></div>
+                  <img
+                    src={logo}
+                    style={{ width: 25, height: 25, marginRight: 15 }}
+                  ></img>
+                  Favourties
+                </Link>
+                <Link class="nav-link sidenavtext " to="/Dashboard/Donations">
+                  <div class="sb-nav-link-icon"></div>
+                  <img
+                    src={logo}
+                    style={{ width: 25, height: 25, marginRight: 15 }}
+                  ></img>
+                  Donations
+                </Link>
+
                 <Link class="nav-link sidenavtext " to="/Dashboard/Forums">
                   <div class="sb-nav-link-icon"></div>
                   <img
@@ -87,7 +107,6 @@ export default function Navigation() {
                 <Link class="nav-link sidenavtext " to="/">
                   <div class="sb-nav-link-icon"></div>
                   <img
-                 
                     src={logo}
                     style={{ width: 25, height: 25, marginRight: 15 }}
                   ></img>{" "}
