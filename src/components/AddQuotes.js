@@ -21,6 +21,7 @@ import {
   getDocs,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 const style = {
@@ -43,6 +44,7 @@ export default function AddQuotes() {
   const [ename, seteName] = useState("");
   const [eauthor, seteAuthor] = useState([]);
   const [etheme, seteTheme] = useState("");
+  const [eid, seteid] = useState("");
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -67,6 +69,32 @@ export default function AddQuotes() {
     setName("");
     setAuthor("");
     setTheme("");
+    getquotes();
+  };
+
+  const handleUpdate = async () => {
+    try {
+      console.log("pathhh", eid);
+      const frankDocRef = doc(db, "Quotes", eid);
+      console.log("frankdocred", frankDocRef);
+      await updateDoc(frankDocRef, {
+        name: ename,
+        author: eauthor,
+        cat: etheme,
+      })
+        .then((res) => {
+          console.log("rees", res);
+        })
+        .catch((err) => {
+          console.log("error", err);
+        });
+
+      seteName("");
+      seteAuthor("");
+      seteTheme("");
+      getquotes();
+      setOpen1(false);
+    } catch (err) {}
   };
 
   const getquotes = async () => {
@@ -138,7 +166,7 @@ export default function AddQuotes() {
               required
               fullWidth
               id="outlined-basic"
-              label="Name"
+              label="Quote"
               value={name}
               variant="outlined"
               onChange={(e) => setName(e.target.value)}
@@ -190,8 +218,8 @@ export default function AddQuotes() {
           <table className="table" style={{ textAlign: "center" }}>
             <thead>
               <tr>
-                <th className="col-1">Name</th>
-                <th className="col-2">Quote</th>
+                <th className="col-1">Quote</th>
+                <th className="col-2">Category</th>
                 <th className="col-3">Author</th>
                 <th className="col-3">Action</th>
               </tr>
@@ -212,7 +240,14 @@ export default function AddQuotes() {
                           }}
                           variant="contained"
                           size="small"
-                          onClick={handleOpen1}
+                          onClick={() => {
+                            seteName(quotes.name);
+                            seteAuthor(quotes.author);
+                            seteTheme(quotes.cat);
+                            seteid(quotes.id);
+                            handleOpen1();
+                            // handleOpenEdit(stage)
+                          }}
                         >
                           Edit
                         </Button>
@@ -227,7 +262,7 @@ export default function AddQuotes() {
                             <h5
                               style={{ textAlign: "center", marginBottom: 15 }}
                             >
-                              Add Quotes
+                              Edit Quote
                             </h5>
 
                             <TextField
@@ -236,10 +271,10 @@ export default function AddQuotes() {
                               required
                               fullWidth
                               id="outlined-basic"
-                              label="Name"
-                              value={name}
+                              label="Quote"
+                              value={ename}
                               variant="outlined"
-                              onChange={(e) => setName(e.target.value)}
+                              onChange={(e) => seteName(e.target.value)}
                             />
                             <TextField
                               required
@@ -248,9 +283,9 @@ export default function AddQuotes() {
                               fullWidth
                               id="outlined-basic"
                               label="Author"
-                              value={author}
+                              value={eauthor}
                               variant="outlined"
-                              onChange={(e) => setAuthor(e.target.value)}
+                              onChange={(e) => seteAuthor(e.target.value)}
                             />
 
                             <FormControl fullWidth className="mb-4">
@@ -261,9 +296,9 @@ export default function AddQuotes() {
                                 labelId="demo-simple-select-label"
                                 size="small"
                                 id="demo-simple-select"
-                                value={theme}
+                                value={etheme}
                                 label="Theme"
-                                onChange={(e) => setTheme(e.target.value)}
+                                onChange={(e) => seteTheme(e.target.value)}
                               >
                                 {stages.map((stages) => {
                                   return (
@@ -281,7 +316,7 @@ export default function AddQuotes() {
                               }}
                               variant="contained"
                               size="small"
-                              onClick={handleAdd}
+                              onClick={handleUpdate}
                             >
                               Submit
                             </Button>

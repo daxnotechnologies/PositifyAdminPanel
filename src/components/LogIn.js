@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 //import { useHistory } from "react-router-dom";
 import "./css/styles.css";
 import TextField from "@mui/material/TextField";
@@ -7,7 +7,11 @@ import Card from "@mui/material/Card";
 import { Link } from "react-router-dom";
 import Home from "./Home.png";
 import logo from "./logo_positify.png";
-import { signInWithEmailAndPassword, onAuthStateChanged,signOut } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
 import { auth } from "../firebase";
 import { useAuth } from "./AuthContext";
 
@@ -19,32 +23,31 @@ export default function Login() {
   const [User, setUser] = useState({});
   const navigate = useNavigate();
 
- /* onAuthStateChanged(auth, (currentUser) => {
+  /* onAuthStateChanged(auth, (currentUser) => {
      setUser(currentUser);
  });*/
- useEffect(() => {
-  const unsubscribe = auth.onAuthStateChanged((user) => {
-    setUser(user);
-  });
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
 
-  return unsubscribe;
-}, []);
+    return unsubscribe;
+  }, []);
   const login = async () => {
-     
-     const user = await signInWithEmailAndPassword(
-         auth,
-         loginEmail,
-         loginPassword
-       ).then(res=>{
-          console.log("resss",res)
-          navigate("/Dashboard");
-          console.log("resss",User)
-
-       }).catch(err=>{
-        console.log("eroors",err)
-       })
-     
-   };
+    const user = await signInWithEmailAndPassword(
+      auth,
+      loginEmail,
+      loginPassword
+    )
+      .then((res) => {
+        console.log("resss", res);
+        navigate("/Dashboard");
+        console.log("resss", User);
+      })
+      .catch((err) => {
+        console.log("eroors", err);
+      });
+  };
 
   return (
     <div
@@ -58,7 +61,7 @@ export default function Login() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div style={{ width: 700, padding: 60, marginTop: 60 }}>
+      <div className="align-items-center" style={{ width: 700, padding: 60 }}>
         {/* <Card style={{ padding: 100, marginTop: 100, opacity: "0.9" }}> */}
         <div className="row">
           <div className="col-md-3"></div>
@@ -98,7 +101,7 @@ export default function Login() {
           className="my-4"
           variant="contained"
           size="large"
-           onClick={login}
+          onClick={login}
         >
           Login
         </Button>
