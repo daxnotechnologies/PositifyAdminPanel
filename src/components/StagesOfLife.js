@@ -27,7 +27,9 @@ const style = {
 };
 export default function StagesOfLife() {
   //  const [rows, setrows] = useState([]);
-  const [p_cat, setPcat] = useState([]);
+
+  const [p_cat, setPcat] = useState("");
+  const [Sub_cat, setSubcat] = useState("");
   const [img, setImg] = useState("");
   const [art, setArt] = useState("");
   const [name, setName] = useState("");
@@ -48,6 +50,8 @@ export default function StagesOfLife() {
   const [headerimg, setheaderImg] = useState();
   const [stages, setstages] = useState([]);
 
+  console.log(p_cat);
+  console.log(Sub_cat);
   const handleAdd = async () => {
     if (img !== null) {
       const imageRef = ref(storage, `${img}-${Date.now()}`);
@@ -67,6 +71,7 @@ export default function StagesOfLife() {
             image: path,
             art: pathart,
             pcat: p_cat,
+            subcat: Sub_cat,
           });
 
           setName("");
@@ -74,6 +79,7 @@ export default function StagesOfLife() {
           setArt("");
           setPcat("");
           setOpen(false);
+          window.location.reload(true)
         } catch (err) {}
       }
     }
@@ -124,6 +130,7 @@ export default function StagesOfLife() {
             image: path,
             art: pathart,
             pcat: p_cate,
+            subcat: Sub_cat,
           })
             .then((res) => {
               console.log("rees", res);
@@ -145,6 +152,7 @@ export default function StagesOfLife() {
   const getstagesoflife = async () => {
     const data = await getDocs(stagessCollectionRef);
     console.log(data);
+
     setstages(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
   const handleDelete = async (id) => {
@@ -157,6 +165,22 @@ export default function StagesOfLife() {
     getstagesoflife();
   }, []);
 
+  let getsubid = [];
+  const [Sub, setSub] = useState([]);
+
+  const handelChange = (event, value) => {
+    const title = value[0].title;
+    setPcat(title);
+    const getid = value[0].mainid;
+    getsubid = top100Films.find((ID) => ID.mainid === getid).SubCatogery;
+    setSub(getsubid);
+  };
+
+  const handleSubtitle = (event, value) => {
+    console.log(value);
+    const Subtitle = value[0].subtitle;
+    setSubcat(Subtitle);
+  };
   return (
     <div>
       <div className="p-4 m-4">
@@ -190,8 +214,7 @@ export default function StagesOfLife() {
             </label>
             <input
               type="file"
-              onChange={(e) => setImg(e.target.value)}
-              value={img}
+              onChange={(e) => setImg(e.target.files[0])}
             ></input>
             <TextField
               className="my-4"
@@ -206,14 +229,35 @@ export default function StagesOfLife() {
             <Autocomplete
               multiple
               className="mb-4"
+              s
               options={top100Films}
               getOptionLabel={(option) => option.title}
+              onChange={handelChange}
+              getOption
               renderInput={(params) => (
                 <TextField
                   {...params}
                   size="small"
-                  onSelect={(e) => setPcat(e.target.value)}
+                  onChange={(e) => setPcat(e.target.value)}
                   value={p_cat}
+                  variant="outlined"
+                  label="Select Parent Categories"
+                  placeholder="Select Parent Categories"
+                />
+              )}
+            />
+            <Autocomplete
+              multiple
+              className="mb-4"
+              options={Sub}
+              getOptionLabel={(option) => option.subtitle}
+              onChange={handleSubtitle}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  onChange={(e) => setSubcat(e.target.value)}
+                  value={Sub_cat}
+                  size="small"
                   variant="outlined"
                   label="Select Parent Categories"
                   placeholder="Select Parent Categories"
@@ -226,8 +270,7 @@ export default function StagesOfLife() {
             </label>
             <input
               type="file"
-              onChange={(e) => setArt(e.target.value)}
-              value={art}
+              onChange={(e) => setArt(e.target.files[0])}
             ></input>
 
             <Button
@@ -368,6 +411,7 @@ export default function StagesOfLife() {
                       </>
                     </td>
                   </tr>
+                  
                 );
               })}
             </tbody>
@@ -379,7 +423,24 @@ export default function StagesOfLife() {
 }
 
 const top100Films = [
-  { title: "The Shawshank Redemption", year: 1994 },
+  {
+    mainid: "1",
+    title: "The Shawshank Redemption",
+    year: 1994,
+    SubCatogery: [
+      { mainid: "1", subid: "100", subtitle: "movie" },
+      {
+        mainid: "1",
+        subid: "200",
+        subtitle: "book",
+      },
+      {
+        mainid: "1",
+        subid: "300",
+        subtitle: "magzine",
+      },
+    ],
+  },
   { title: "The Godfather", year: 1972 },
   { title: "The Godfather: Part II", year: 1974 },
   { title: "The Dark Knight", year: 2008 },
