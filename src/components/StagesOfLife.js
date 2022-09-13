@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Autocomplete, Button, TextField } from "@mui/material";
-import { Link, Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -27,7 +27,6 @@ const style = {
 };
 export default function StagesOfLife() {
   //  const [rows, setrows] = useState([]);
-
   const [p_cat, setPcat] = useState("");
   const [Sub_cat, setSubcat] = useState("");
   const [img, setImg] = useState("");
@@ -79,7 +78,7 @@ export default function StagesOfLife() {
           setArt("");
           setPcat("");
           setOpen(false);
-          window.location.reload(true)
+          window.location.reload(true);
         } catch (err) {}
       }
     }
@@ -148,7 +147,6 @@ export default function StagesOfLife() {
       }
     }
   };
-
   const getstagesoflife = async () => {
     const data = await getDocs(stagessCollectionRef);
     console.log(data);
@@ -160,11 +158,10 @@ export default function StagesOfLife() {
     await deleteDoc(stageDoc);
     getstagesoflife();
   };
-
+  console.log(stages)
   useEffect(() => {
     getstagesoflife();
   }, []);
-
   let getsubid = [];
   const [Sub, setSub] = useState([]);
 
@@ -175,7 +172,6 @@ export default function StagesOfLife() {
     getsubid = top100Films.find((ID) => ID.mainid === getid).SubCatogery;
     setSub(getsubid);
   };
-
   const handleSubtitle = (event, value) => {
     console.log(value);
     const Subtitle = value[0].subtitle;
@@ -259,8 +255,8 @@ export default function StagesOfLife() {
                   value={Sub_cat}
                   size="small"
                   variant="outlined"
-                  label="Select Parent Categories"
-                  placeholder="Select Parent Categories"
+                  label="Select Sub Categories"
+                  placeholder="Select Sub Categories"
                 />
               )}
             />
@@ -370,20 +366,6 @@ export default function StagesOfLife() {
                             backgroundColor: "#65350f",
                             marginRight: 15,
                           }}
-                          variant="contained"
-                          size="small"
-                          // onClick=
-                          // {() => {
-                          //   handleDelete(stage.id);
-                          // }}
-                        >
-                          View Forum
-                        </Button>
-                        <Button
-                          style={{
-                            backgroundColor: "#65350f",
-                            marginRight: 15,
-                          }}
                           onClick={() => {
                             setArte(stage.art);
                             setNamee(stage.name);
@@ -411,7 +393,6 @@ export default function StagesOfLife() {
                       </>
                     </td>
                   </tr>
-                  
                 );
               })}
             </tbody>
