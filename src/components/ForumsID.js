@@ -156,10 +156,11 @@ export default function Forums() {
       </Modal>
 
       <div className="row">
-        {forum.map((val, ind) => 
-
+        {forum.map((val, ind) => {
+          let image = val.image;
+          return (
             <div key={ind} className="col-md-6">
-              <Card     style={{ padding: 30, marginBottom: 20 }}>
+              <Card style={{ padding: 30, marginBottom: 20 }}>
                 <div>
                   <h4 onClick={handleModalOpen}> {val.name}</h4>
                   <p>{val.desc}</p>
@@ -171,7 +172,6 @@ export default function Forums() {
                     }}
                     variant="contained"
                     size="small"
-                 
                   >
                     Edit
                   </Button>
@@ -181,9 +181,13 @@ export default function Forums() {
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                   >
-                    <Box sx={style}>
+                    <Box
+                      sx={style}
+                      style={{
+                        backgroundImage: `url(${image})`,
+                      }}
+                    >
                       <div>
-                        <img src={val.image} />
                         <h4> {val.name}</h4>
                         <p>{val.desc}</p>
                       </div>
@@ -202,7 +206,8 @@ export default function Forums() {
                 </div>
               </Card>
             </div>
-        )}
+          );
+        })}
       </div>
     </div>
   );
