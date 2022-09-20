@@ -13,9 +13,12 @@ import {
   collection,
   addDoc,
   getDocs,
+  query,
+  where,
   doc,
   deleteDoc,
 } from "firebase/firestore";
+import FavTbody from "./FavTbody";
 
 const style = {
   position: "absolute",
@@ -37,11 +40,17 @@ export default function AllUsers() {
   const handleClose = () => setOpen(false);
   const quotesRef = collection(db, "Quotes");
   const [quotes, setquotes] = useState([]);
+
   const getquotes = async () => {
-    const data = await getDocs(quotesRef);
-    //console.log(data);
-    setquotes(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    const q = query(collection(db, "Quotes"), where("totalLikes", ">", 10));
+    const querySnapshot = await getDocs(q);
+    const datas = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+    }));
+    setquotes(datas)
   };
+
+console.log(quotes)
 
   useEffect(() => {
     getquotes();
@@ -71,69 +80,15 @@ export default function AllUsers() {
               </tr>
             </thead>
             <tbody>
-              {quotes.map((quotes) => {
-                return (
-                  <tr>
-                    <td style={{ paddingLeft: 30 }}>{quotes.name}</td>
-
-                    <td>
-                      <Button
-                        style={{ backgroundColor: "#65350f" }}
-                        variant="contained"
-                        size="small"
-                        onClick={handleOpen}
-                      >
-                        View
-                      </Button>
-                      <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                      >
-                        <Box sx={style}>
-                          <div
-                            className="row"
-                            style={{
-                              height: "calc(90vh - 56px)",
-                              overflow: "auto",
-                            }}
-                          >
-                            <div className="col m-2">
-                              <Card className="p-4">
-                                <h5
-                                  style={{
-                                    marginBottom: 25,
-                                  }}
-                                >
-                                  Favourite Quotes
-                                </h5>
-                                <ol>
-                                  <li>{quotes.favName}</li>
-                                </ol>
-                              </Card>
-                            </div>
-
-                            <div className="col m-2">
-                              <Card className="p-4">
-                                <h5
-                                  style={{
-                                    marginBottom: 25,
-                                  }}
-                                >
-                                  Liked Quotes
-                                </h5>
-                                <ol>
-                                  <li>{quotes.likedName}</li>
-                                </ol>
-                              </Card>
-                            </div>
-                          </div>
-                        </Box>
-                      </Modal>
-                    </td>
-                  </tr>
-                );
+              {quotes.map((val,ind) => {
+                return <FavTbody
+                key={ind}
+                name={val.name}
+                totalLikes={val.totalLikes}
+                favName={val.favName}
+                likedName={val.likedName}
+                />
+                
               })}
             </tbody>
           </table>

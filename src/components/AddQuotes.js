@@ -14,7 +14,8 @@ import "./css/styles.css";
 //import { DataGrid } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { db } from "../firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { db, storage } from "../firebase";
 import {
   collection,
   addDoc,
@@ -23,6 +24,7 @@ import {
   deleteDoc,
   updateDoc,
 } from "firebase/firestore";
+import * as XLSX from "xlsx";
 
 const style = {
   position: "absolute",
@@ -120,6 +122,48 @@ export default function AddQuotes() {
     getquotes();
     //setloading(true);
   };
+  const readExcel = (file) => {
+    const promise = new Promise((res, rej) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        res(data);
+      };
+      fileReader.onerror = (err) => {
+        rej(err);
+      };
+    });
+    promise.then((d) => {
+      console.log(d);
+      for (let i = 0; i < d.length; i++) {
+        let array = d[i];
+
+        addDoc(quotesRef, {
+          name: array.name,
+          author: array.author,
+          cat: array.theme,
+          fav: favUser,
+        });
+      }
+      getquotes();
+    });
+  };
+  // const addfile = (e) => {
+
+  //   const file = e.target.files[0];
+  //   console.log(file)
+  //   const fileRef = ref(storage, `${file}`);
+  //   console.log(fileRef)
+  //   uploadBytes(fileRef, img);
+  //   // const path = getDownloadURL(imageRef);
+  // };
   return (
     <div>
       <div className="p-4 m-4">
@@ -138,7 +182,8 @@ export default function AddQuotes() {
         >
           Add Quotes
         </Button>
-        <Button
+        {/* <Button
+        type='flie'
           variant="contained"
           style={{
             float: "right",
@@ -148,6 +193,25 @@ export default function AddQuotes() {
           //   onClick={handleOpen}
         >
           Upload Quotes
+        </Button> */}
+        <Button
+          variant="contained"
+          component="label"
+          style={{
+            float: "right",
+            backgroundColor: "#65350f",
+            marginBottom: 30,
+          }}
+        >
+          Upload Quotes
+          <input
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              readExcel(file);
+            }}
+            hidden
+          />
         </Button>
         <Modal
           open={open}
@@ -225,9 +289,9 @@ export default function AddQuotes() {
               </tr>
             </thead>
             <tbody>
-              {quotes.map((quotes) => {
+              {quotes.map((quotes, ind) => {
                 return (
-                  <tr>
+                  <tr key={ind}>
                     <td>{quotes.name}</td>
                     <td>{quotes.cat}</td>
                     <td>{quotes.author}</td>
