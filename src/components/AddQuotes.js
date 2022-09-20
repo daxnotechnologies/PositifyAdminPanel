@@ -151,9 +151,11 @@ export default function AddQuotes() {
           cat: array.theme,
           fav: favUser,
         });
+        
       }
-      getquotes();
+
     });
+   
   };
   // const addfile = (e) => {
 
