@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 //import { useHistory } from "react-router-dom";
 import "./css/styles.css";
 import TextField from "@mui/material/TextField";
+import Alert from '@mui/material/Alert';
 import { Button } from "@mui/material";
 import Card from "@mui/material/Card";
 import { Link } from "react-router-dom";
@@ -21,6 +22,8 @@ export default function Login() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [User, setUser] = useState({});
+  const [Errors, setErrors] = useState(false);
+  const [text, settext] = useState('');
   const navigate = useNavigate();
 
   /* onAuthStateChanged(auth, (currentUser) => {
@@ -33,6 +36,8 @@ export default function Login() {
 
     return unsubscribe;
   }, []);
+
+
   const login = async () => {
     const user = await signInWithEmailAndPassword(
       auth,
@@ -45,7 +50,23 @@ export default function Login() {
         console.log("resss", User);
       })
       .catch((err) => {
-        console.log("eroors", err);
+        let eroors=err.toString().split(' ')
+        console.log(err)
+                if (eroors[3] === "(auth/invalid-email).") {
+                  settext('Invalid Email');
+                  setErrors(true)
+                }
+                else if (eroors[3] === "(auth/internal-error).") {
+                  settext('Please fill out the field ');
+                  setErrors(true)
+                }
+                else if (eroors[3] === "(auth/wrong-password).") {
+                  settext('Invalid Email or Password');
+                  setErrors(true)
+                }
+                else{
+                  settext('Please Try Again Later');
+                }
       });
   };
 
@@ -91,10 +112,11 @@ export default function Login() {
           fullWidth
           value={loginPassword}
           id="outlined-basic"
+          type="password"
           label="Password"
           onChange={(e) => setLoginPassword(e.target.value)}
         />
-
+        {Errors && <Alert severity="error">{text}</Alert>}
         <Button
           fullWidth
           style={{ backgroundColor: "#000", color: "#fff" }}
