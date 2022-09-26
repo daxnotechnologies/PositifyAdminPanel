@@ -42,11 +42,12 @@ export default function AddQuotes() {
   const [favUser, setfavUser] = useState([]);
 
   const [theme, setTheme] = useState("");
-
+  const [subtheme, setsubTheme] = useState("");
   const [ename, seteName] = useState("");
   const [eauthor, seteAuthor] = useState([]);
   const [etheme, seteTheme] = useState("");
   const [eid, seteid] = useState("");
+  const [maincat, setmaincat] = useState('');
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -61,11 +62,14 @@ export default function AddQuotes() {
   const stagessCollectionRef = collection(db, "stagesoflife");
   const [stages, setstages] = useState([]);
 
+
+
   const handleAdd = async () => {
     await addDoc(quotesRef, {
       name: name,
       author: author,
-      cat: theme,
+      cat: maincat,
+      subcat:subtheme,
       fav: favUser,
     });
     setName("");
@@ -111,11 +115,7 @@ export default function AddQuotes() {
     setstages(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
 
-  useEffect(() => {
-    getquotes();
-    getstagesoflife();
-  }, []);
-
+  console.log(stages);
   const handleDelete = async (id) => {
     const quoteDoc = doc(db, "Quotes", id);
     await deleteDoc(quoteDoc);
@@ -151,11 +151,8 @@ export default function AddQuotes() {
           cat: array.theme,
           fav: favUser,
         });
-        
       }
-
     });
-   
   };
   // const addfile = (e) => {
 
@@ -166,6 +163,26 @@ export default function AddQuotes() {
   //   uploadBytes(fileRef, img);
   //   // const path = getDownloadURL(imageRef);
   // };
+  let getsubid = [];
+  const [Sub, setSub] = useState([]);
+
+  let getMaincatName = '';
+
+  const dropdown = (e) => {
+    setTheme(e.target.value);
+    let id = e.target.value;
+    getsubid = stages.find((ID) => ID.id === id).subcat;
+    setSub(getsubid);
+   
+    getMaincatName = stages.find((ID) => ID.id === id).name;
+    setmaincat(getMaincatName)
+  };
+ console.log(maincat)
+ console.log(subtheme)
+  useEffect(() => {
+    getquotes();
+    getstagesoflife();
+  }, []);
   return (
     <div>
       <div className="p-4 m-4">
@@ -259,13 +276,32 @@ export default function AddQuotes() {
                 id="demo-simple-select"
                 value={theme}
                 label="Theme"
-                onChange={(e) => setTheme(e.target.value)}
+                onChange={(e) => dropdown(e)}
               >
                 {stages.map((stages) => {
-                  return <MenuItem value={stages.name}>{stages.name}</MenuItem>;
+                  return <MenuItem value={stages.id}>{stages.name}</MenuItem>;
                 })}
               </Select>
             </FormControl>
+
+            <FormControl fullWidth className="mb-4">
+              <InputLabel id="demo-simple-select-label">
+                Set Theme Of Your Quote
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                size="small"
+                id="demo-simple-select"
+              value={subtheme}
+                label="Theme"
+               onChange={(e)=>setsubTheme(e.target.value)}
+              >
+                {Sub.map((Sub) => {
+                  return <MenuItem value={Sub} >{Sub}</MenuItem>;
+                })}
+              </Select>
+            </FormControl>
+
             <Button
               style={{
                 backgroundColor: "#80471C",
@@ -412,7 +448,24 @@ export default function AddQuotes() {
 }
 
 const top100Films = [
-  { title: "The Shawshank Redemption", year: 1994 },
+  {
+    mainid: "1",
+    title: "The Shawshank Redemption",
+    year: 1994,
+    SubCatogery: [
+      { mainid: "1", subid: "100", subtitle: "movie" },
+      {
+        mainid: "1",
+        subid: "200",
+        subtitle: "book",
+      },
+      {
+        mainid: "1",
+        subid: "300",
+        subtitle: "magzine",
+      },
+    ],
+  },
   { title: "The Godfather", year: 1972 },
   { title: "The Godfather: Part II", year: 1974 },
   { title: "The Dark Knight", year: 2008 },
