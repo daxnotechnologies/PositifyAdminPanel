@@ -26,7 +26,7 @@ function App() {
           <Route path="/Dashboard/AllUsers" element={<AllUsers />} />
           <Route path="/Dashboard/AddQuotes" element={<AddQuotes />} />
           <Route path="/Dashboard/Forums" element={<Forums />} />
-          <Route path="/Dashboard/Forums/:id" element={<FourmsID/>} />
+          <Route path="/Dashboard/Forums/:cname/:id" element={<FourmsID/>} />
           <Route path="/Dashboard/Favourite" element={<Favourite />} />
           <Route path="/Dashboard/Donations" element={<Donations />} />
         </Route>

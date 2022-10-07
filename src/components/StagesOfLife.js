@@ -22,6 +22,8 @@ import {
   updateDoc,
   setDoc,
   arrayUnion,
+  where,
+  query,
 } from "firebase/firestore";
 
 import { textAlign } from "@mui/system";
@@ -68,6 +70,7 @@ export default function StagesOfLife() {
   const [eid, seteid] = useState("");
 
   const stagessCollectionRef = collection(db, "stagesoflife");
+  const createforum = collection(db, "forum testing");
   const [loading, setloading] = useState(false);
   const [headerimg, setheaderImg] = useState();
   const [stages, setstages] = useState([]);
@@ -86,10 +89,17 @@ export default function StagesOfLife() {
         // console.log(imageRef);
         try {
           console.log("pathhh", headerimg);
-          await addDoc(stagessCollectionRef, {
+
+          const documentid = await addDoc(stagessCollectionRef, {
             name: name,
             image: path,
             art: pathart,
+          });
+          console.log(documentid.id);
+          await addDoc(createforum, {
+            cat: name,
+            image: pathart,
+            categoryID: documentid.id,
           });
 
           setName("");
@@ -171,17 +181,27 @@ export default function StagesOfLife() {
     setstages(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
   const handleDelete = async (id) => {
+    const q =query( collection(db, "forum testing"), where("categoryID", "==", id));
+    const querySnapshot = await getDocs(q);
+    const datas = querySnapshot.docs.map((doc) => ({
+      forumid: doc.id,
+    }));
     const stageDoc = doc(db, "stagesoflife", id);
+for(let i=0;i<datas.length;i++)
+{
+    const forumdel = doc(db, "forum testing", datas[i].forumid);
+    await deleteDoc(forumdel);
+}
     await deleteDoc(stageDoc);
     getstagesoflife();
   };
   const handleAddSubcat = async (id) => {
     console.log(id);
-    let datasub=Sub_cat
-    const cat = doc(db, "stagesoflife",id);
+    let datasub = Sub_cat;
+    const cat = doc(db, "stagesoflife", id);
     try {
       await updateDoc(cat, {
-        subcat: arrayUnion(datasub)
+        subcat: arrayUnion(datasub),
       })
         .then((res) => {
           console.log("rees", res);

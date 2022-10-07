@@ -10,20 +10,12 @@ import {
   doc,
   deleteDoc,
   where,
+  orderBy,
 } from "firebase/firestore";
+import Message from "./Message";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background",
-  boxShadow: 24,
-  p: 4,
-};
 export default function Forums() {
   const handleOpen = () => setOpen(true);
   const handleModalOpen = () => setmodal(true);
@@ -33,13 +25,12 @@ export default function Forums() {
   const [img, setImg] = useState("");
   const [text1, setText] = useState("");
   const [name, setName] = useState("");
-  const forumsRef = collection(db, "forums");
+  const forumsRef = collection(db, "forum testing");
   const stagessCollectionRef = collection(db, "stagesoflife");
-  const [loading, setloading] = useState(false);
   const [forum, setforum] = useState([]);
-  const [cato, setcato] = useState([]);
-  const { id } = useParams();
-
+  const [Comments, setComments] = useState([]);
+  const { id, cname } = useParams();
+  const [forumId, setforumId] = useState('');
   const handleAdd = async () => {
     await addDoc(forumsRef, {
       image: img,
@@ -66,7 +57,10 @@ export default function Forums() {
   };
 
   const getforums = async () => {
-    const q = query(collection(db, "forums"), where("categoryID", "==", id));
+    const q = query(
+      collection(db, "forum testing"),
+      where("categoryID", "==", id)
+    );
     const querySnapshot = await getDocs(q);
     const datas = querySnapshot.docs.map((doc) => ({
       ...doc.data(),
@@ -74,9 +68,22 @@ export default function Forums() {
     }));
     setforum(datas);
   };
+  const getoforumcomments = async (id) => {
+    setforumId(id)
+    console.log(id)
+    const q = query(collection(db, `forum testing/${id}/Comments`),orderBy("Time","desc"));
+    const querySnapshot = await getDocs(q);
+    const datas = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+    console.log(datas)
+    setComments(datas);
+    
+  };
 
   const handleDelete = async (id) => {
-    const forumsDoc = doc(db, "forums", id);
+    const forumsDoc = doc(db, "forum testing", id);
     await deleteDoc(forumsDoc);
     getforums();
   };
@@ -84,15 +91,16 @@ export default function Forums() {
   useEffect(() => {
     getC();
     getforums();
+    getoforumcomments();
   }, []);
-
+  console.log(forum);
   const handleClose = () => setOpen(false);
   const handleModal = () => setmodal(false);
   return (
     <div style={{ padding: 50 }}>
       <div className="row" style={{ marginBottom: 15 }}>
         <h1 style={{ textAlign: "center" }}>
-          <b>{id}</b>
+          <b>{cname}</b>
         </h1>
         <div className="d-flex justify-content-end">
           <Button
@@ -114,7 +122,7 @@ export default function Forums() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box >
           <h5 style={{ textAlign: "center", marginBottom: 15 }}>
             Add New Forum
           </h5>
@@ -158,12 +166,14 @@ export default function Forums() {
       <div className="row">
         {forum.map((val, ind) => {
           let image = val.image;
+
           return (
             <div key={ind} className="col-md-6">
               <Card style={{ padding: 30, marginBottom: 20 }}>
                 <div>
-                  <h4 onClick={handleModalOpen}> {val.name}</h4>
-                  <p>{val.desc}</p>
+                  <h4 onClick={()=>{handleModalOpen();
+                  getoforumcomments(val.id)}}> {val.cat}</h4>
+                  <p>{val.description}</p>
                   <Button
                     style={{
                       backgroundColor: "#65350f",
@@ -182,14 +192,36 @@ export default function Forums() {
                     aria-describedby="modal-modal-description"
                   >
                     <Box
-                      sx={style}
+                    //  https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGBEpwrcx9BLcNgCluJrUoR5IGp0UzC7wt7_jQqpU1&s
                       style={{
-                        backgroundImage: `url(${image})`,
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "center center",
+                        backgroundSize: "cover",
+                        backgroundImage: `url("${image}")`,
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: 600,
+                        height: 600,
+                        boxShadow: 24,
+                        p: 4,
                       }}
                     >
-                      <div>
-                        <h4> {val.name}</h4>
-                        <p>{val.desc}</p>
+                      <div
+                        style={{ overflowY: "scroll", width: 600, height: 600, }}
+                      >
+                        {Comments.map((val, ind) => {
+                          return <Message 
+                          key={ind}
+                          Name={val.username}
+                          Time={val.Time}
+                          comment={val.comment}
+                          userimage={val.userimage}
+                          commentId={val.id}
+                          forumId={forumId}
+                          />;
+                        })}
                       </div>
                     </Box>
                   </Modal>

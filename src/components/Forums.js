@@ -82,7 +82,7 @@ export default function Forums() {
                     variant="contained"
                     size="small"
                   >
-                <Link to={`/Dashboard/Forums/${val.id}`}>View Forum </Link>
+                <Link to={`/Dashboard/Forums/${val.name}/${val.id}`}>View Forum </Link>
                   </Button>
                 </div>
               </Card>
