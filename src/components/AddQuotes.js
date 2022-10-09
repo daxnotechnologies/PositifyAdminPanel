@@ -9,7 +9,8 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-//import { Link, Outlet } from "react-router-dom";
+import MapsUgcIcon from "@mui/icons-material/MapsUgc";
+import { Link } from "react-router-dom";
 import "./css/styles.css";
 //import { DataGrid } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
@@ -23,6 +24,8 @@ import {
   doc,
   deleteDoc,
   updateDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import * as XLSX from "xlsx";
 
@@ -47,7 +50,7 @@ export default function AddQuotes() {
   const [eauthor, seteAuthor] = useState([]);
   const [etheme, seteTheme] = useState("");
   const [eid, seteid] = useState("");
-  const [maincat, setmaincat] = useState('');
+  const [maincat, setmaincat] = useState("");
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -59,18 +62,19 @@ export default function AddQuotes() {
 
   const quotesRef = collection(db, "Quotes");
   const [quotes, setquotes] = useState([]);
+  const [approval, setapproval] = useState([]);
+  const [chk, setchk] = useState('');
   const stagessCollectionRef = collection(db, "stagesoflife");
   const [stages, setstages] = useState([]);
-
-
 
   const handleAdd = async () => {
     await addDoc(quotesRef, {
       name: name,
       author: author,
       cat: maincat,
-      subcat:subtheme,
+      subcat: subtheme,
       fav: favUser,
+      isApprove: true,
     });
     setName("");
     setAuthor("");
@@ -104,11 +108,30 @@ export default function AddQuotes() {
   };
 
   const getquotes = async () => {
-    const data = await getDocs(quotesRef);
     //console.log(data);
-    setquotes(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    const q = query(collection(db, "Quotes"), where("isApprove", "==", true));
+    const querySnapshot = await getDocs(q);
+    setquotes(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
 
+  const getapproval =async () => {
+    const q = query(
+      collection(db, "Quotes"),
+      where("isRefused", "==", false),
+      where("isApprove", "==", false)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    setapproval(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    if (approval.length != 0) {
+      setchk('true');
+    }
+    else {
+      setchk('false');
+    }
+  
+  };
+  console.log(chk)
   const getstagesoflife = async () => {
     const data = await getDocs(stagessCollectionRef);
     console.log(data);
@@ -150,6 +173,7 @@ export default function AddQuotes() {
           author: array.author,
           cat: array.theme,
           fav: favUser,
+          isApprove: true,
         });
       }
     });
@@ -166,29 +190,55 @@ export default function AddQuotes() {
   let getsubid = [];
   const [Sub, setSub] = useState([]);
 
-  let getMaincatName = '';
+  let getMaincatName = "";
 
   const dropdown = (e) => {
     setTheme(e.target.value);
     let id = e.target.value;
     getsubid = stages.find((ID) => ID.id === id).subcat;
     setSub(getsubid);
-   
+
     getMaincatName = stages.find((ID) => ID.id === id).name;
-    setmaincat(getMaincatName)
+    setmaincat(getMaincatName);
   };
- console.log(maincat)
- console.log(subtheme)
+  console.log(maincat);
+  console.log(subtheme);
   useEffect(() => {
+    getapproval();
     getquotes();
     getstagesoflife();
-  }, []);
+  }, [chk]);
   return (
     <div>
       <div className="p-4 m-4">
         <h1 style={{ textAlign: "center", marginBottom: 40 }}>
           <b>QUOTES MANAGMENT</b>
         </h1>
+        {chk==='true' && (
+          <MapsUgcIcon
+            style={{
+              position: "absolute",
+              right: 27,
+              top: 114,
+              zIndex: 1,
+              marginBottom: 30,
+              color: "red",
+            }}
+          />
+        )}
+        <Link to="/Dashboard/AddQuotes/Approval">
+          <Button
+            variant="contained"
+            style={{
+              marginLeft: 10,
+              float: "right",
+              backgroundColor: "#65350f",
+              marginBottom: 30,
+            }}
+          >
+            Requests
+          </Button>
+        </Link>
         <Button
           variant="contained"
           style={{
@@ -292,12 +342,12 @@ export default function AddQuotes() {
                 labelId="demo-simple-select-label"
                 size="small"
                 id="demo-simple-select"
-              value={subtheme}
+                value={subtheme}
                 label="Theme"
-               onChange={(e)=>setsubTheme(e.target.value)}
+                onChange={(e) => setsubTheme(e.target.value)}
               >
                 {Sub.map((Sub) => {
-                  return <MenuItem value={Sub} >{Sub}</MenuItem>;
+                  return <MenuItem value={Sub}>{Sub}</MenuItem>;
                 })}
               </Select>
             </FormControl>

@@ -15,7 +15,7 @@ import FourmsID from "./components/ForumsID";
 import Login from "./components/LogIn";
 import Favourite from "./components/Favourite";
 import Donations from "./components/Donations";
-
+import ApproveQoutes from "./components/ApproveQoutes"
 function App() {
   return (
     <Router>
@@ -25,6 +25,7 @@ function App() {
           <Route path="/Dashboard/StagesOfLife" element={<StagesOfLife />} />
           <Route path="/Dashboard/AllUsers" element={<AllUsers />} />
           <Route path="/Dashboard/AddQuotes" element={<AddQuotes />} />
+          <Route path="/Dashboard/AddQuotes/Approval" element={<ApproveQoutes />} />
           <Route path="/Dashboard/Forums" element={<Forums />} />
           <Route path="/Dashboard/Forums/:cname/:id" element={<FourmsID/>} />
           <Route path="/Dashboard/Favourite" element={<Favourite />} />
