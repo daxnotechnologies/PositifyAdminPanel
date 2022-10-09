@@ -84,9 +84,8 @@ export default function AddQuotes() {
 
   const handleUpdate = async () => {
     try {
-      console.log("pathhh", eid);
+
       const frankDocRef = doc(db, "Quotes", eid);
-      console.log("frankdocred", frankDocRef);
       await updateDoc(frankDocRef, {
         name: ename,
         author: eauthor,
@@ -117,12 +116,11 @@ export default function AddQuotes() {
   const getapproval =async () => {
     const q = query(
       collection(db, "Quotes"),
-      where("isRefused", "==", false),
       where("isApprove", "==", false)
     );
     
     const querySnapshot = await getDocs(q);
-    setapproval(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    setapproval(querySnapshot.docs.map((doc) => ({  id: doc.id })));
     if (approval.length != 0) {
       setchk('true');
     }

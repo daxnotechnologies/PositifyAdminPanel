@@ -64,8 +64,8 @@ export default function StagesOfLife() {
 
   //update Docs
   const [p_cate, setPcate] = useState([]);
-  const [imge, setImge] = useState("");
-  const [arte, setArte] = useState("");
+  const [imge, setImge] = useState();
+  const [arte, setArte] = useState();
   const [namee, setNamee] = useState("");
   const [eid, seteid] = useState("");
 
@@ -77,7 +77,7 @@ export default function StagesOfLife() {
 
   const handleAdd = async () => {
     if (img !== null) {
-      const imageRef = ref(storage, `${img}`);
+      const imageRef = ref(storage, `${img.name}`);
       await uploadBytes(imageRef, img);
       const path = await getDownloadURL(imageRef);
 
@@ -111,68 +111,82 @@ export default function StagesOfLife() {
       }
     }
   };
-  const getBase64 = (file) => {
-    return new Promise((resolve) => {
-      let baseURL = "";
-      // Make new FileReader
-      let reader = new FileReader();
-      // Convert the file to base64 text
-      reader.readAsDataURL(file);
-
-      // on reader load somthing...
-      reader.onload = () => {
-        // Make a fileInfo Object
-
-        baseURL = reader.result;
-        resolve(baseURL);
-      };
-    });
-  };
   const handleUpdate = async () => {
-    if (imge !== null) {
-      const imageRef = ref(storage, `${imge}`);
+    console.log(eid);
+    console.log(imge);
+    console.log(arte);
+    let path;
+    let pathart;
+    if (imge !== undefined) {
+      const imageRef = ref(storage, `${imge.name}`);
       await uploadBytes(imageRef, imge);
-      const path = await getDownloadURL(imageRef);
-
-      getBase64(imge)
-        .then((result) => {
-          imge["base64"] = result;
-          setheaderImg(result);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      if (arte !== null) {
-        const imageRefart = ref(storage, `${arte}`);
-        await uploadBytes(imageRefart, arte);
-        const pathart = await getDownloadURL(imageRefart);
-
-        // console.log(imageRef);
-        try {
-          console.log("pathhh", eid);
-          const frankDocRef = doc(db, "stagesoflife", eid);
-          console.log("frankdocred", frankDocRef);
-          await updateDoc(frankDocRef, {
-            name: namee,
-            image: path,
-            art: pathart,
-            pcat: p_cate,
-            subcat: Sub_cat,
-          })
-            .then((res) => {
-              console.log("rees", res);
-            })
-            .catch((err) => {
-              console.log("error", err);
-            });
-
-          setNamee("");
-          setImge("");
-          setArte("");
-          setPcate("");
-          setOpen1(false);
-        } catch (err) {}
+      path = await getDownloadURL(imageRef);
+    }
+    console.log(path);
+    if (arte !== undefined) {
+      const imageRefart = ref(storage, `${arte.name}`);
+      await uploadBytes(imageRefart, arte);
+      pathart = await getDownloadURL(imageRefart);
+    }
+    console.log(pathart);
+    let dataArray={}
+    if (namee !== "" && path !== undefined && pathart !== undefined) {
+      console.log('1')
+      dataArray={
+        name:namee,
+        image:path,
+        art:pathart
       }
+    }
+    if (namee !== "" && path === undefined && pathart === undefined) {
+      console.log('2')
+      dataArray={
+        name:namee,
+      }
+    }
+    if (namee === "" && path !== undefined && pathart === undefined) {
+      console.log('3')
+      dataArray={
+        image:path,
+      }
+    }
+    if (namee === "" && path === undefined && pathart !== undefined) {
+      dataArray={
+        art:pathart
+      }
+    }
+    if (namee !== "" && path !== undefined && pathart === undefined) {
+      dataArray={
+        name:namee,
+        image:path,
+    
+      }
+    }
+    if (namee !== "" && path === undefined && pathart !== undefined) {
+      dataArray={
+        name:namee,
+   
+        art:pathart
+      }
+    }
+    if (namee === "" && path !== undefined && pathart !== undefined) {
+      dataArray={
+    
+        image:path,
+        art:pathart
+      }
+    }
+    try {
+      console.log(eid);
+      const frankDocRef = doc(db, "stagesoflife", eid);
+      await updateDoc(frankDocRef,dataArray);
+      setNamee("");
+      setImge("");
+      setArte("");
+      setOpen1(false);
+      window.location.reload(true);
+    } catch (err) {
+      console.log("error", err);
     }
   };
   const getstagesoflife = async () => {
@@ -180,18 +194,21 @@ export default function StagesOfLife() {
     console.log(data);
     setstages(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
+  console.log(stages);
   const handleDelete = async (id) => {
-    const q =query( collection(db, "forum testing"), where("categoryID", "==", id));
+    const q = query(
+      collection(db, "forum testing"),
+      where("categoryID", "==", id)
+    );
     const querySnapshot = await getDocs(q);
     const datas = querySnapshot.docs.map((doc) => ({
       forumid: doc.id,
     }));
     const stageDoc = doc(db, "stagesoflife", id);
-for(let i=0;i<datas.length;i++)
-{
-    const forumdel = doc(db, "forum testing", datas[i].forumid);
-    await deleteDoc(forumdel);
-}
+    for (let i = 0; i < datas.length; i++) {
+      const forumdel = doc(db, "forum testing", datas[i].forumid);
+      await deleteDoc(forumdel);
+    }
     await deleteDoc(stageDoc);
     getstagesoflife();
   };
@@ -218,25 +235,10 @@ for(let i=0;i<datas.length;i++)
     }
   };
 
-  console.log(stages);
   useEffect(() => {
     getstagesoflife();
   }, []);
-  let getsubid = [];
-  const [Sub, setSub] = useState([]);
 
-  // const handelChange = (event, value) => {
-  //   const title = value[0].title;
-  //   setPcat(title);
-  //   const getid = value[0].mainid;
-  //   getsubid = top100Films.find((ID) => ID.mainid === getid).SubCatogery;
-  //   setSub(getsubid);
-  // };
-  // const handleSubtitle = (event, value) => {
-  //   console.log(value);
-  //   const Subtitle = value[0].subtitle;
-  //   setSubcat(Subtitle);
-  // };
   return (
     <div>
       <div className="p-4 m-4">
@@ -297,44 +299,6 @@ for(let i=0;i<datas.length;i++)
               variant="outlined"
               onChange={(e) => setName(e.target.value)}
             />
-            {/* <Autocomplete
-              multiple
-              className="mb-4"
-              s
-              options={top100Films}
-              getOptionLabel={(option) => option.title}
-              onChange={handelChange}
-              getOption
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  onChange={(e) => setPcat(e.target.value)}
-                  value={p_cat}
-                  variant="outlined"
-                  label="Select Parent Categories"
-                  placeholder="Select Parent Categories"
-                />
-              )}
-            />
-            <Autocomplete
-              multiple
-              className="mb-4"
-              options={Sub}
-              getOptionLabel={(option) => option.subtitle}
-              onChange={handleSubtitle}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  onChange={(e) => setSubcat(e.target.value)}
-                  value={Sub_cat}
-                  size="small"
-                  variant="outlined"
-                  label="Select Sub Categories"
-                  placeholder="Select Sub Categories"
-                />
-              )}
-            /> */}
 
             <label className="mb-2">
               <b>Upload Background Art</b>
@@ -401,47 +365,58 @@ for(let i=0;i<datas.length;i++)
             >
               Submit
             </Button>
-            {/* <Autocomplete
-              multiple
-              className="mb-4"
-              s
-              options={top100Films}
-              getOptionLabel={(option) => option.title}
-              onChange={handelChange}
-              getOption
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  onChange={(e) => setPcat(e.target.value)}
-                  value={p_cat}
-                  variant="outlined"
-                  label="Select Parent Categories"
-                  placeholder="Select Parent Categories"
-                />
-              )}
-            /> */}
-            {/* <Autocomplete
-              multiple
-              className="mb-4"
-              options={Sub}
-              getOptionLabel={(option) => option.subtitle}
-              onChange={handleSubtitle}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  onChange={(e) => setSubcat(e.target.value)}
-                  value={Sub_cat}
-                  size="small"
-                  variant="outlined"
-                  label="Select Sub Categories"
-                  placeholder="Select Sub Categories"
-                />
-              )}
-            /> */}
           </Box>
         </Modal>
 
+        <div>
+          <table className="table" style={{ textAlign: "center", height: 40 }}>
+            <thead>
+              <tr>
+                <th className="col-1">Image</th>
+                <th className="col-2">Name</th>
+                <th className="col-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stages.map((stage, ind) => (
+                <tr key={ind}>
+                  <td>
+                    <img src={stage.image}></img>
+                  </td>
+                  <td>{stage.name}</td>
+                  <td>
+                    <>
+                      <Button
+                        style={{
+                          backgroundColor: "#65350f",
+                          marginRight: 15,
+                        }}
+                        onClick={() => {
+                          seteid(stage.id);
+                          handleOpen1();
+                        }}
+                        variant="contained"
+                        size="small"
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        style={{ backgroundColor: "#65350f" }}
+                        variant="contained"
+                        size="small"
+                        onClick={() => {
+                          handleDelete(stage.id);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <Modal
           open={open1}
           onClose={handleClose1}
@@ -454,8 +429,7 @@ for(let i=0;i<datas.length;i++)
             </h5>
             <input
               type="file"
-              onChange={(e) => setImge(e.target.value)}
-              //value={imge.toString()}
+              onChange={(e) => setImge(e.target.files[0])}
             ></input>
             <TextField
               className="my-4"
@@ -467,99 +441,24 @@ for(let i=0;i<datas.length;i++)
               variant="outlined"
               onChange={(e) => setNamee(e.target.value)}
             />
-            {/* <Autocomplete
-              multiple
-              className="mb-4"
-              options={top100Films}
-              getOptionLabel={(option) => option.title}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size="small"
-                  onChange={(e) => setPcate(e.target.value)}
-                  value={p_cate}
-                  variant="outlined"
-                  label="Select Parent Categories"
-                  placeholder="Select Parent Categories"
-                />
-              )}
-            /> */}
-
             <label className="mb-2">
               <b>Upload Art</b>
             </label>
             <input
               type="file"
-              onChange={(e) => setArte(e.target.value)}
-              // value={arte}
+              onChange={(e) => setArte(e.target.files[0])}
             ></input>
 
             <Button
               style={{ backgroundColor: "#65350f", float: "right" }}
               variant="contained"
               size="small"
-              onClick={handleUpdate}
+              onClick={() => handleUpdate()}
             >
               Submit
             </Button>
           </Box>
         </Modal>
-        <div>
-          <table className="table" style={{ textAlign: "center", height: 40 }}>
-            <thead>
-              <tr>
-                <th className="col-1">Image</th>
-                <th className="col-2">Name</th>
-                <th className="col-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stages.map((stage) => {
-                return (
-                  <tr>
-                    <td>
-                      <img src={stage.image}></img>
-                    </td>
-                    <td>{stage.name}</td>
-                    <td>
-                      <>
-                        <Button
-                          style={{
-                            backgroundColor: "#65350f",
-                            marginRight: 15,
-                          }}
-                          onClick={() => {
-                            setArte(stage.art);
-                            setNamee(stage.name);
-                            setImge(stage.image);
-                            setPcate(stage.pcat);
-                            seteid(stage.id);
-                            handleOpen1();
-                            // handleOpenEdit(stage)
-                          }}
-                          variant="contained"
-                          size="small"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          style={{ backgroundColor: "#65350f" }}
-                          variant="contained"
-                          size="small"
-                          onClick={() => {
-                            handleDelete(stage.id);
-                          }}
-                        >
-                          Delete
-                        </Button>
-                      </>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
   );

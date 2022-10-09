@@ -32,7 +32,7 @@ export default function AddQuotes() {
 
   const getquotes = async () => {
     //console.log(data);
-    const q =query( collection(db, "Quotes"),where("isRefused", "==", false),where("isApprove", "==", false) );
+    const q =query( collection(db, "Quotes"),where("isApprove", "==", false) );
     const querySnapshot = await getDocs(q)
     setquotes(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
@@ -42,10 +42,8 @@ export default function AddQuotes() {
   const handleRefuse = async (id) => {
 
     try {
-      const frankDocRef = doc(db, "Quotes", id);
-      await updateDoc(frankDocRef, {
-        isRefused:true
-      })
+      const quoteDoc = doc(db, "Quotes", id);
+      await deleteDoc(quoteDoc);
     } catch (err) {
         console.log(err)
     }
