@@ -130,7 +130,7 @@ export default function StagesOfLife() {
   };
   const handleUpdate = async () => {
     if (imge !== null) {
-      const imageRef = ref(storage, `${imge}-${Date.now()}`);
+      const imageRef = ref(storage, `${imge}`);
       await uploadBytes(imageRef, imge);
       const path = await getDownloadURL(imageRef);
 
@@ -143,7 +143,7 @@ export default function StagesOfLife() {
           console.log(err);
         });
       if (arte !== null) {
-        const imageRefart = ref(storage, `${arte}-${Date.now()}`);
+        const imageRefart = ref(storage, `${arte}`);
         await uploadBytes(imageRefart, arte);
         const pathart = await getDownloadURL(imageRefart);
 
