@@ -345,7 +345,7 @@ export default function AddQuotes() {
                 onChange={(e) => setsubTheme(e.target.value)}
               >
                 {Sub.map((Sub) => {
-                  return <MenuItem value={Sub}>{Sub}</MenuItem>;
+                  return (<MenuItem value={Sub}>{Sub}</MenuItem>);
                 })}
               </Select>
             </FormControl>
