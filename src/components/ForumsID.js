@@ -30,7 +30,7 @@ export default function Forums() {
   const [forum, setforum] = useState([]);
   const [Comments, setComments] = useState([]);
   const { id, cname } = useParams();
-  const [forumId, setforumId] = useState('');
+  const [forumId, setforumId] = useState("");
   const handleAdd = async () => {
     await addDoc(forumsRef, {
       image: img,
@@ -61,23 +61,29 @@ export default function Forums() {
       collection(db, "forum testing"),
       where("categoryID", "==", id)
     );
+
     const querySnapshot = await getDocs(q);
+
     const datas = querySnapshot.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
     }));
     setforum(datas);
   };
+
   const getoforumcomments = async (id) => {
-    setforumId(id)
-    console.log(id)
-    const q = query(collection(db, `forum testing/${id}/Comments`),orderBy("Time","desc"));
+    setforumId(id);
+    console.log(id);
+    const q = query(
+      collection(db, `forum testing/${id}/Comments`),
+      orderBy("sent_time", "desc")
+    );
     const querySnapshot = await getDocs(q);
+    console.log(querySnapshot) 
     const datas = querySnapshot.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
     }));
-    console.log(datas)
     setComments(datas);
     
   };
@@ -93,7 +99,7 @@ export default function Forums() {
     getforums();
     getoforumcomments();
   }, []);
-  console.log(forum);
+
   const handleClose = () => setOpen(false);
   const handleModal = () => setmodal(false);
   return (
@@ -122,7 +128,7 @@ export default function Forums() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box >
+        <Box>
           <h5 style={{ textAlign: "center", marginBottom: 15 }}>
             Add New Forum
           </h5>
@@ -171,8 +177,15 @@ export default function Forums() {
             <div key={ind} className="col-md-6">
               <Card style={{ padding: 30, marginBottom: 20 }}>
                 <div>
-                  <h4 onClick={()=>{handleModalOpen();
-                  getoforumcomments(val.id)}}> {val.cat}</h4>
+                  <h4
+                    onClick={() => {
+                      handleModalOpen();
+                      getoforumcomments(val.id);
+                    }}
+                  >
+                    {" "}
+                    {val.cat}
+                  </h4>
                   <p>{val.description}</p>
                   <Button
                     style={{
@@ -192,7 +205,7 @@ export default function Forums() {
                     aria-describedby="modal-modal-description"
                   >
                     <Box
-                    //  https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGBEpwrcx9BLcNgCluJrUoR5IGp0UzC7wt7_jQqpU1&s
+                      //  https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGBEpwrcx9BLcNgCluJrUoR5IGp0UzC7wt7_jQqpU1&s
                       style={{
                         backgroundRepeat: "no-repeat",
                         backgroundPosition: "center center",
@@ -209,18 +222,23 @@ export default function Forums() {
                       }}
                     >
                       <div
-                        style={{ overflowY: "scroll", width: 600, height: 600, }}
+                        style={{ overflowY: "scroll", width: 600, height: 600 }}
                       >
                         {Comments.map((val, ind) => {
-                          return <Message 
-                          key={ind}
-                          Name={val.username}
-                          Time={val.Time}
-                          comment={val.comment}
-                          userimage={val.userimage}
-                          commentId={val.id}
-                          forumId={forumId}
-                          />;
+                          console.log(val)
+                          return (
+                            <Message
+                              key={ind}
+                              Name={val.username}
+                              Time={val.sent_time}
+                              comment={val.comment_description}
+                              userimage={val.userimage}
+                              commentId={val.id}
+                              favlist={val.favlist}
+                              reports={val.reports}
+                              forumId={forumId}
+                            />
+                          );
                         })}
                       </div>
                     </Box>

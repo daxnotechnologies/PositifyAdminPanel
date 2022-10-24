@@ -60,6 +60,8 @@ export default function AllUsers() {
                 <th className="col-1">Name</th>
                 <th className="col-3">Date</th>
                 <th className="col-1">Donation Amount</th>
+                <th className="col-1">Donation Type</th>
+                <th className="col-1">User Id</th>
               </tr>
             </thead>
             <tbody>
@@ -69,6 +71,8 @@ export default function AllUsers() {
                     <td>{donation.name}</td>
                     <td>{donation.date.toDate().toString()}</td>
                     <td>{donation.amount}</td>
+                    <td>{donation.typeoftransaction}</td>
+                    <td>{donation.userid}</td>
                   </tr>
                 );
               })}

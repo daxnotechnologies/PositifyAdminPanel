@@ -78,14 +78,14 @@ export default function Navigation() {
                   All Users
                 </Link>
 
-                <Link class="nav-link sidenavtext " to="/Dashboard/Favourite">
+                {/* <Link class="nav-link sidenavtext " to="/Dashboard/Favourite">
                   <div class="sb-nav-link-icon"></div>
                   <img
                     src={logo}
                     style={{ width: 25, height: 25, marginRight: 15 }}
                   ></img>
                   Favourties
-                </Link>
+                </Link> */}
                 <Link class="nav-link sidenavtext " to="/Dashboard/Donations">
                   <div class="sb-nav-link-icon"></div>
                   <img

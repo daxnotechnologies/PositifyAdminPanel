@@ -70,7 +70,6 @@ export default function AllUsers() {
       await updateDoc(frankDocRef, {
         name: Name,
         contact: ContactNo,
-        MembeshipStatus: status,
       })
         .then((res) => {
           console.log("rees", res);
@@ -81,7 +80,6 @@ export default function AllUsers() {
 
       setName("");
       setContactNo("");
-      setstatus("");
       getusers();
       setOpen(false);
     } catch (err) {
@@ -101,9 +99,10 @@ export default function AllUsers() {
               <tr>
                 <th className="col-1">Name</th>
                 <th className="col-2">Email</th>
-                <th className="col-2">Contact No.</th>
-                <th className="col-4" style={{ backgroundColor: "#f5f5f5" }}>
-                  Membership Status
+                <th className="col-2">User ID</th>
+                <th className="col-2">Date Of Signup</th>
+                <th className="col-3" style={{ backgroundColor: "#f5f5f5" }}>
+                Date Of Subcription
                 </th>
                 <th className="col-3">Action</th>
               </tr>
@@ -114,10 +113,10 @@ export default function AllUsers() {
                   <tr>
                     <td>{users.name}</td>
                     <td>{users.email}</td>
-                    <td>{users.contact}</td>
+                    <td>{users.id}</td>
+                    <td>{users.dateOfSignup}</td>
                     <td style={{ backgroundColor: "#f5f5f5" }}>
-                      {users.MembeshipStatus}
-                      <b> {users.amount} </b>
+                      {users.dateOfSubcription}
                     </td>
 
                     <td>
@@ -136,7 +135,25 @@ export default function AllUsers() {
                         >
                           Edit
                         </Button>
-                        <Modal
+
+                        <Button
+                          style={{ backgroundColor: "#65350f" }}
+                          variant="contained"
+                          size="small"
+                          onClick={() => {
+                            handleDelete(users.id);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <Modal
                           open={open}
                           onClose={handleClose}
                           aria-labelledby="modal-modal-title"
@@ -145,8 +162,7 @@ export default function AllUsers() {
                           <Box sx={style}>
                             <h5
                               style={{ textAlign: "center", marginBottom: 15 }}
-                            >
-                              Add Quotes
+                            >Edit User
                             </h5>
 
                             <TextField
@@ -171,28 +187,7 @@ export default function AllUsers() {
                               value={ContactNo}
                               onChange={(e) => setContactNo(e.target.value)}
                             />
-                            
-                            <FormControl fullWidth className="mb-4">
-                              <InputLabel id="demo-simple-select-label">
-                                Membership Status
-                              </InputLabel>
-                              <Select
-                                labelId="demo-simple-select-label"
-                                size="small"
-                                id="demo-simple-select"
-                                label="Membership Status"
-                                value={status}
-                                onChange={(e) => setstatus(e.target.value)}
-                              >
-                                {stages.map((stages) => {
-                                  return (
-                                    <MenuItem value={stages.Status}>
-                                      {stages.Status}
-                                    </MenuItem>
-                                  );
-                                })}
-                              </Select>
-                            </FormControl>
+                          
                             
                             <Button
                               style={{
@@ -207,34 +202,10 @@ export default function AllUsers() {
                             </Button>
                           </Box>
                         </Modal>
-                        <Button
-                          style={{ backgroundColor: "#65350f" }}
-                          variant="contained"
-                          size="small"
-                          onClick={() => {
-                            handleDelete(users.id);
-                          }}
-                        >
-                          Delete
-                        </Button>
-                      </>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
   );
 }
 
-const stages = [
-  {
-    Status: "Activated",
-  },
-  {
-    Status: "Deactivated",
-  },
-];
+

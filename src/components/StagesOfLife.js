@@ -129,57 +129,55 @@ export default function StagesOfLife() {
       pathart = await getDownloadURL(imageRefart);
     }
     console.log(pathart);
-    let dataArray={}
+    let dataArray = {};
     if (namee !== "" && path !== undefined && pathart !== undefined) {
-      console.log('1')
-      dataArray={
-        name:namee,
-        image:path,
-        art:pathart
-      }
+      console.log("1");
+      dataArray = {
+        name: namee,
+        image: path,
+        art: pathart,
+      };
     }
     if (namee !== "" && path === undefined && pathart === undefined) {
-      console.log('2')
-      dataArray={
-        name:namee,
-      }
+      console.log("2");
+      dataArray = {
+        name: namee,
+      };
     }
     if (namee === "" && path !== undefined && pathart === undefined) {
-      console.log('3')
-      dataArray={
-        image:path,
-      }
+      console.log("3");
+      dataArray = {
+        image: path,
+      };
     }
     if (namee === "" && path === undefined && pathart !== undefined) {
-      dataArray={
-        art:pathart
-      }
+      dataArray = {
+        art: pathart,
+      };
     }
     if (namee !== "" && path !== undefined && pathart === undefined) {
-      dataArray={
-        name:namee,
-        image:path,
-    
-      }
+      dataArray = {
+        name: namee,
+        image: path,
+      };
     }
     if (namee !== "" && path === undefined && pathart !== undefined) {
-      dataArray={
-        name:namee,
-   
-        art:pathart
-      }
+      dataArray = {
+        name: namee,
+
+        art: pathart,
+      };
     }
     if (namee === "" && path !== undefined && pathart !== undefined) {
-      dataArray={
-    
-        image:path,
-        art:pathart
-      }
+      dataArray = {
+        image: path,
+        art: pathart,
+      };
     }
     try {
       console.log(eid);
       const frankDocRef = doc(db, "stagesoflife", eid);
-      await updateDoc(frankDocRef,dataArray);
+      await updateDoc(frankDocRef, dataArray);
       setNamee("");
       setImge("");
       setArte("");
@@ -194,7 +192,6 @@ export default function StagesOfLife() {
     console.log(data);
     setstages(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
-  console.log(stages);
   const handleDelete = async (id) => {
     const q = query(
       collection(db, "forum testing"),
@@ -258,19 +255,6 @@ export default function StagesOfLife() {
           Add Categories
         </Button>
 
-        <Button
-          variant="contained"
-          style={{
-            float: "right",
-            backgroundColor: "#65350f",
-            marginBottom: 30,
-            marginRight: 5,
-          }}
-          onClick={handleOpen2}
-        >
-          Add Sub-Categories
-        </Button>
-
         <Modal
           open={open}
           onClose={handleClose}
@@ -329,7 +313,7 @@ export default function StagesOfLife() {
             <h5 style={{ textAlign: "center", marginBottom: 15 }}>
               Add New Sub-Categories
             </h5>
-            <FormControl fullWidth className="mb-4">
+            {/* <FormControl fullWidth className="mb-4">
               <InputLabel id="demo-simple-select-label">
                 Set Theme Of Your Quote
               </InputLabel>
@@ -344,7 +328,17 @@ export default function StagesOfLife() {
                   return <MenuItem value={stages.id}>{stages.name}</MenuItem>;
                 })}
               </Select>
-            </FormControl>
+            </FormControl> */}
+            <TextField
+              floatingLabelStyle={{color: 'black' }}
+              className="my-4 "
+              size="small"
+              fullWidth
+              id="outlined-basic"
+              label={p_cat[1]}
+              variant="outlined"
+              disabled={true}
+            />
             <TextField
               className="my-4"
               size="small"
@@ -360,7 +354,7 @@ export default function StagesOfLife() {
               variant="contained"
               size="small"
               onClick={() => {
-                handleAddSubcat(p_cat);
+                handleAddSubcat(p_cat[0]);
               }}
             >
               Submit
@@ -386,6 +380,21 @@ export default function StagesOfLife() {
                   <td>{stage.name}</td>
                   <td>
                     <>
+                      <Button
+                        variant="contained"
+                        style={{
+                          float: "right",
+                          backgroundColor: "#65350f",
+                          marginBottom: 30,
+                          marginRight: 5,
+                        }}
+                        onClick={() => {
+                          handleOpen2();
+                          setPcat([stage.id, stage.name]);
+                        }}
+                      >
+                        Add Sub-Categories
+                      </Button>
                       <Button
                         style={{
                           backgroundColor: "#65350f",
@@ -425,8 +434,11 @@ export default function StagesOfLife() {
         >
           <Box sx={style}>
             <h5 style={{ textAlign: "center", marginBottom: 15 }}>
-              Edit Stages Of Life
+            Change category
             </h5>
+            <label className="mb-2">
+              <b>Upload Category Icon</b>
+            </label>
             <input
               type="file"
               onChange={(e) => setImge(e.target.files[0])}
@@ -442,7 +454,7 @@ export default function StagesOfLife() {
               onChange={(e) => setNamee(e.target.value)}
             />
             <label className="mb-2">
-              <b>Upload Art</b>
+              <b>Upload Background Image</b>
             </label>
             <input
               type="file"
@@ -463,24 +475,3 @@ export default function StagesOfLife() {
     </div>
   );
 }
-
-const top100Films = [
-  {
-    mainid: "1",
-    title: "The Shawshank Redemption",
-    year: 1994,
-    SubCatogery: [
-      { mainid: "1", subid: "100", subtitle: "movie" },
-      {
-        mainid: "1",
-        subid: "200",
-        subtitle: "book",
-      },
-      {
-        mainid: "1",
-        subid: "300",
-        subtitle: "magzine",
-      },
-    ],
-  },
-];

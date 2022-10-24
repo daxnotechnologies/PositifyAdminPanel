@@ -28,7 +28,7 @@ function App() {
           <Route path="/Dashboard/AddQuotes/Approval" element={<ApproveQoutes />} />
           <Route path="/Dashboard/Forums" element={<Forums />} />
           <Route path="/Dashboard/Forums/:cname/:id" element={<FourmsID/>} />
-          <Route path="/Dashboard/Favourite" element={<Favourite />} />
+          {/* <Route path="/Dashboard/Favourite" element={<Favourite />} /> */}
           <Route path="/Dashboard/Donations" element={<Donations />} />
         </Route>
       </Routes>
